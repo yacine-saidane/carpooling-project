@@ -1,0 +1,9 @@
+.idea/
+.gradle/
+build/
+*.iml
+local.properties
+.kotlin/
+
+app/google-services.json
+app/src/main/assets/service-account.json

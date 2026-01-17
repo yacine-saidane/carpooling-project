@@ -1,0 +1,81 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#F8F8F8"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <View
+            android:id="@+id/avatarCircle"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/circle_background"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ImageView
+            android:id="@+id/avatarImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/img"
+            android:contentDescription="Avatar"
+            app:layout_constraintTop_toTopOf="@id/avatarCircle"
+            app:layout_constraintBottom_toBottomOf="@id/avatarCircle"
+            app:layout_constraintStart_toStartOf="@id/avatarCircle"
+            app:layout_constraintEnd_toEndOf="@id/avatarCircle"
+            />
+
+        <TextView
+            android:id="@+id/userNameText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintTop_toTopOf="@id/avatarCircle"
+            app:layout_constraintStart_toEndOf="@id/avatarCircle"
+            app:layout_constraintEnd_toStartOf="@id/timeText"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/lastMessageText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Dernier message..."
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@id/userNameText"
+            app:layout_constraintStart_toEndOf="@id/avatarCircle"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/timeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10:30"
+            android:textSize="11sp"
+            android:textColor="#666666"
+            app:layout_constraintTop_toTopOf="@id/userNameText"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
