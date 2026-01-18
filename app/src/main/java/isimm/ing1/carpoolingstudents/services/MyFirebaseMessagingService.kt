@@ -6,8 +6,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import isimm.ing1.carpoolingstudents.R
@@ -22,20 +24,37 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "New FCM token: $token")
 
         getSharedPreferences("fcm_prefs", Context.MODE_PRIVATE)
             .edit()
             .putString("fcm_token", token)
             .apply()
+
+        saveTokenToFirestore(token)
+    }
+
+    private fun saveTokenToFirestore(token: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId == null) {
+            return
+        }
+
+
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(userId)
+            .set(
+                mapOf("fcmToken" to token),
+                SetOptions.merge()
+            )
+
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        Log.d(TAG, "Message received")
 
-        // Get data from notification
         val title = message.data["title"] ?: message.notification?.title ?: "Notification"
         val body = message.data["body"] ?: message.notification?.body ?: ""
         val rideId = message.data["rideId"]

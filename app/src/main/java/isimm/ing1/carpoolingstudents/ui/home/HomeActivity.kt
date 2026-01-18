@@ -5,10 +5,11 @@ import android.app.AlertDialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import isimm.ing1.carpoolingstudents.R
 import isimm.ing1.carpoolingstudents.databinding.ActivityHomeBinding
 import isimm.ing1.carpoolingstudents.ui.messages.ConversationListFragment
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.firestore.SetOptions
 import isimm.ing1.carpoolingstudents.ui.profile.ProfileFragment
 import isimm.ing1.carpoolingstudents.ui.rides.MyRidesFragment
 import isimm.ing1.carpoolingstudents.ui.rides.RideListFragment
@@ -19,6 +20,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import isimm.ing1.carpoolingstudents.ui.rides.CreateRideActivity
 
 class HomeActivity : AppCompatActivity() {
@@ -37,12 +39,11 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
         if (userId == null) {
             Toast.makeText(this, "No user logged in!", Toast.LENGTH_LONG).show()
-
+            return
         }
 
         if (savedInstanceState == null) {
@@ -52,6 +53,7 @@ class HomeActivity : AppCompatActivity() {
         setupBottomNavigation()
         setupFab()
         requestNotificationPermission()
+        saveFCMTokenManually()
     }
 
     private fun setupBottomNavigation() {
@@ -93,6 +95,7 @@ class HomeActivity : AppCompatActivity() {
             .replace(R.id.fragmentContainer, fragment)
             .commit()
     }
+
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
@@ -141,4 +144,23 @@ class HomeActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun saveFCMTokenManually() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId == null) {
+            return
+        }
+
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .set(
+                    mapOf("fcmToken" to token),
+                    SetOptions.merge()
+                )
+
+        }
+    }
 }

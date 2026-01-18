@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.messaging.FirebaseMessaging
 import isimm.ing1.carpoolingstudents.databinding.ActivityLoginBinding
 import isimm.ing1.carpoolingstudents.ui.home.HomeActivity
@@ -24,7 +25,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (viewModel.isLoggedIn()) {
-            saveFCMToken()
             goToHome()
             return
         }
@@ -85,39 +85,18 @@ class LoginActivity : AppCompatActivity() {
         binding.passwordLayout.error = null
         return true
     }
-
-    /**
-     * Save FCM token to Firestore after login
-     */
     private fun saveFCMToken() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-
-        if (userId == null) {
-            return
-        }
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
-
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(userId)
-                .update("fcmToken", token)
-                .addOnSuccessListener {
-                }
-                .addOnFailureListener { e ->
-                    FirebaseFirestore.getInstance()
-                        .collection("users")
-                        .document(userId)
-                        .set(mapOf("fcmToken" to token), com.google.firebase.firestore.SetOptions.merge())
-                        .addOnSuccessListener {
-                        }
-                        .addOnFailureListener { e2 ->
-                        }
-                }
-        }.addOnFailureListener { e ->
+                .set(mapOf("fcmToken" to token), SetOptions.merge())
         }
     }
+
+
     private fun goToHome() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
